@@ -5,6 +5,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 
 client.once(Events.ClientReady, readyClient => {
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+	var oldName;
 	cron.schedule('*/5 * * * * *', function() {
 		const guild = client.guilds.cache.get(serverID);
 		var john = guild.members.cache.get(userID);
@@ -14,12 +15,15 @@ client.once(Events.ClientReady, readyClient => {
 				gameName = john.presence.activities[i].name;
 			}
 		}
-		if(gameName != undefined){
-			client.user.setActivity(gameName)
-			john.presence.member.setNickname(baseName + " " + gameName.replace(/\s/g, ''));
-		}else{
-			client.user.setPresence({ activity: null })
-			john.presence.member.setNickname(null);
+		if(oldName != gameName){
+			oldName = gameName;
+			if(gameName != undefined){
+				client.user.setActivity(gameName)
+				john.presence.member.setNickname(baseName + " " + gameName.replace(/\s/g, ''));
+			}else{
+				client.user.setPresence({ activity: null })
+				john.presence.member.setNickname(null);
+			}
 		}
 	});
 });
